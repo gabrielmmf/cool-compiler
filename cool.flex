@@ -41,12 +41,23 @@ extern YYSTYPE cool_yylval;
 
 /*
  *  Add Your own definitions here
+    DIGIT = [0-9]
+    LETTER = [a-z]
+    ID = [LETTER][LETTER | DIGIT]*
+    SIGNAL = [-+]
+    INT = SIGNAL?DIGITDIGIT*
  */
 
 %}
 
 /*
  * Define names for regular expressions here.
+   ID = [LETTER][LETTER | DIGIT]*
+   SIGNAL = [-+]
+   INT = [SIGNAL?][DIGIT][DIGIT]*
+	
+NAO SEI ONDE COLOCA ISSO TZ E NAO SEI SE TA CERTO
+	
  */
 
 DARROW          =>
