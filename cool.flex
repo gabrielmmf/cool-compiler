@@ -41,29 +41,22 @@ extern YYSTYPE cool_yylval;
 
 /*
  *  Add Your own definitions here
-    DIGIT = [0-9]
-    LETTER = [a-z]
-    ID = [LETTER][LETTER | DIGIT]*
-    SIGNAL = [-+]
-    INT = SIGNAL?DIGITDIGIT*
  */
 
 %}
 
 /*
- * Define names for regular expressions here.
-   ID = [LETTER][LETTER | DIGIT]*
-   SIGNAL = [-+]
-   INT = [SIGNAL?][DIGIT][DIGIT]*
-	
-NAO SEI ONDE COLOCA ISSO TZ E NAO SEI SE TA CERTO
-	
+ * Define names for regular expressions here.		
  */
+DIGIT [0-9]
+TYPE_ID [A-Z][a-zA-Z0-9_]*
+OBJECT_ID [a-z][a-zA-Z0-9_]*
+INTEGER {DIGIT}+
 
 DARROW          =>
 
 %%
-
+i
  /*
   *  Nested comments
   */
@@ -79,6 +72,49 @@ DARROW          =>
   * which must begin with a lower-case letter.
   */
 
+(t)(?i:rue){
+    cool_yylval.boolean = true;
+    return BOOL_CONST;
+}
+
+(f)(?i:alse){
+    cool_yylval.boolean = false;
+    return BOOL_CONST;
+}  
+(?i:class) {return CLASS;}
+(?i:else) {return ELSE;}
+(?i:fi) {return FI;}
+(?i:if) {return IF;}
+(?i:in) {return IN;}
+(?i:inherits) {return INHERITS;}
+(?i:isvoid) {return ISVOID;}
+(?i:let) {return LET;}
+(?i:loop) {return LOOP;}
+(?i:pool) {return POOL;}
+(?i:then) {return THEN;}
+(?i:while) {return WHILE;}
+(?i:case) {return CASE;}
+(?i:esac) {return ESAC;}
+(?i:new) {return NEW;}
+(?i:of) {return OF;}
+(?i:new) {return NEW;}
+(?i:not) {return NOT;}
+"+" {return '+';}
+"-" {return '-';}
+"*" {return "*";}
+"/" {return "/";}
+"=" {return "=";}
+"(" {return '(';}
+")" {return ')';}
+"{" {return '{';}
+"}" {return '}';}
+"@" {return '@';}
+":" {return ':';}
+";" {return ';';}
+'.' {return '.';}
+',' {return ',';}
+'<' {return '<';}
+'~' {return '~';} 
 
  /*
   *  String constants (C syntax)
