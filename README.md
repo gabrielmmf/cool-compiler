@@ -344,7 +344,7 @@ When an error is found in a string:
 
 	invalid-identifier
 
-**gabriel&mariano generates two identifiers and a error for the undefined token "&" token:**
+**gabriel&mariano generates two identifiers and an error for the undefined token "&" token:**
 
 	gabriel&mariano
 
