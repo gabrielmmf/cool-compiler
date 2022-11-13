@@ -286,5 +286,4 @@ f(?i:alse) {
   return ERROR;
  }
 
-
 %%
