@@ -125,7 +125,7 @@
 
 # Design Decisions
 ## Definitions
-A comment_val variable was defined to store the depth of the comment, allowing nested comment without errors.
+A comment_val variable was used to store the depth of the comment, allowing nested comment without errors.
 When a token "(*" is reached, the comment_val is incremented:
 
 	int comment_val = 0;
@@ -155,13 +155,16 @@ The rules for DARROW, ASSIGN, LE, COMMENT_START, COMMENT_END, STRING_DELIMITER w
 
 The defined states of the lexer were:
 
-	When a comment starts:
+When a comment starts:
+
 	COMMENT
 
-	When a string starts:
+When a string starts:
+
 	STRING
 
-	When an error is found in a string:
+When an error is found in a string:
+
 	STRING_ERROR
 
 ## Rules
