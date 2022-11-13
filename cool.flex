@@ -43,11 +43,25 @@ extern YYSTYPE cool_yylval;
  *  Add Your own definitions here
  */
 
+ /* ADICIONADO POR TZ; */
+
+/* Varieble to store the number of subcomments */
+ int comment_val = 0
+
+ 
+ /* Macro for send errors */
+ #define RETURN_ERROR(msg) \
+	       yylval.error_msg = msg;\
+	       return ERROR;
+
+ /* FIM DA ADIÇÃO DE TZ */
+
 %}
 
 /*
  * Define names for regular expressions here.		
  */
+
 DIGIT [0-9]
 TYPE_ID [A-Z][a-zA-Z0-9_]*
 OBJECT_ID [a-z][a-zA-Z0-9_]*
@@ -55,17 +69,97 @@ INTEGER {DIGIT}+
 
 DARROW          =>
 
+/* ADICIONADO POR TZ: */
+
+ASSIGN               <-
+LE                   <=
+
+COMMENT_START        ("(*")
+COMMENT_END          ("*)")
+
+STRING_DELIMITER         "\""
+
+
+/* STATES OF THE LEXER */
+%x COMMENT STRING STRING_ERROR
+
+/* FIM DA ADIÇÃO DE TZ */
+
 %%
-i
+/* ADICIONADO POR TZ */
+
+\n              { curr_lineno++; }
+[ \t\r\v\f]+    {} 
+
+/* FIM DA ADIÇÃO DE TZ */
+
  /*
   *  Nested comments
   */
+
+/* ADICIONADO POR TZ */
+
+/* VERIFY UNMATCHED COMMENT */
+{COMMENT_END} {
+  RETURN_ERROR("Unexpected end of commentary")
+}
+
+{COMMENT_START} { 
+  BEGIN(COMMENT);
+  comment_val = 1
+}
+
+<COMMENT>{COMMENT_START}{
+  comment_val++;
+}
+
+<COMMENT>{COMMENT_END}{
+  comment_val--;
+  if (comment_val == 0) 
+    BEGIN(INITIAL);
+}
+
+<COMMENT>\n {
+  curr_lineno++;
+}
+
+<COMMENT><<EOF>> {
+  BEGIN(INITIAL)
+  RETURN_ERROR("Comment reached the End Of File")
+}
+
+/* FIM DA ADIÇÃO DE TZ */
 
 
  /*
   *  The multiple-character operators.
   */
+"+" {return '+';}
+"-" {return '-';}
+"*" {return "*";}
+"/" {return "/";}
+"=" {return "=";}
+"(" {return '(';}
+")" {return ')';}
+"{" {return '{';}
+"}" {return '}';}
+"@" {return '@';}
+":" {return ':';}
+";" {return ';';}
+'.' {return '.';}
+',' {return ',';}
+'<' {return '<';}
+'~' {return '~';}
+
 {DARROW}		{ return (DARROW); }
+
+/*ADICIONADO POR TZ: */
+
+{ASSIGN} { return (ASSIGN);}
+{LE} { return (LE);}
+{INTEGER} { cool_yylval.symbol = inttable.add_string(yytext); return INT_CONST; }
+
+/* FIM DA ADIÇÃO DE TZ */
 
  /*
   * Keywords are case-insensitive except for the values true and false,
@@ -99,22 +193,25 @@ i
 (?i:of) {return OF;}
 (?i:new) {return NEW;}
 (?i:not) {return NOT;}
-"+" {return '+';}
-"-" {return '-';}
-"*" {return "*";}
-"/" {return "/";}
-"=" {return "=";}
-"(" {return '(';}
-")" {return ')';}
-"{" {return '{';}
-"}" {return '}';}
-"@" {return '@';}
-":" {return ':';}
-";" {return ';';}
-'.' {return '.';}
-',' {return ',';}
-'<' {return '<';}
-'~' {return '~';} 
+
+/* ADICIONADO POR TZ */
+
+{TYPE_ID}{
+  cool_yylval.symbol = stringtable.add_string(yytext);
+	return TYPE_ID;
+}
+
+{OBJECT_ID} {
+	cool_yylval.symbol = stringtable.add_string(yytext);
+	return OBJECT_ID;
+}
+
+
+/* Any character that disrespect above rules throws an error: */
+
+. { RETURN_ERROR(yytext) }
+
+/*FIM DA ADIÇÃO DE TZ */
 
  /*
   *  String constants (C syntax)
@@ -122,6 +219,89 @@ i
   *  \n \t \b \f, the result is c.
   *
   */
+
+/* ADICIONADO POR TZ */
+
+{STRING_DELIMITER} {
+  string_buf_ptr = string_buf;
+  BEGIN(STRING);
+}
+
+<STRING>{STRING_DELIMITER} {
+  BEGIN(INITIAL);
+  (*string_buf_ptr) = '\0';
+  cool_yylval.symbol = stringtable.add_string(string_buf);
+  return STR_CONST
+}
+
+<STRING>"\\"\n {
+  curr_lineno++;
+  if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
+    BEGIN(STRING_ERROR);
+    RETURN_ERROR("String too much long")
+  }
+  *(string_buf_ptr++) = '\n';
+}
+
+<STRING><<EOF>> {
+  RETURN_ERROR("String reache End Of File");
+}
+
+<STRING>\n {
+  curr_lineno++;
+  string_buf_ptr = string_buf;
+  BEGIN(INITIAL);
+  RETURN_ERROR("Unterminated string");
+}
+
+<STRING>\0 {
+  BEGIN(STRING_ERROR);
+  SET_ERROR("String contains null character");
+}
+
+<STRING>\\. {
+  if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
+    BEGIN(STRING_ERROR);
+    RETURN_ERROR("String constant too much long");
+  }
+  if (yytext[1] == 'b') {
+    (*string_buf_ptr++) = '\b';
+  } else if (yytext[1] == 't') {
+    (*string_buf_ptr++) = '\t';
+  } else if (yytext[1] == 'n') {
+    (*string_buf_ptr++) = '\n';
+  } else if (yytext[1] == 'f') {
+    (*string_buf_ptr++) = '\f';
+  } else if (yytext[1] == '\0') {
+    cool_yylval.error_msg = "String contains null character";
+    BEGIN(STRING_ERROR);
+    return (ERROR);
+  } else {
+    (*string_buf_ptr++) = yytext[1];
+  }
+}
+
+<STRING>.                {
+  if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
+    BEGIN(STRING_ERROR);
+    RETURN_ERROR("String constant too much long");
+  }
+  *(string_buf_ptr++) = yytext[0];
+}
+
+<STRING_ERROR>{STRING_DELIMITER}{
+  BEGIN(INITIAL);
+}
+
+<STRING_ERROR>\n {
+  BEGIN(INITIAL);
+}
+
+<STRING_ERROR><<EOF>> {return 0;}
+<STRING_ERROR>. {}
+
+
+/* FIM DA ADIÇÃO DE TZ */
 
 
 %%
