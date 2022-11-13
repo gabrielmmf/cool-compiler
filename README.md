@@ -1,124 +1,491 @@
-README file for Programming Assignment 2 (C++ edition)
-=====================================================
+	README file for Programming Assignment 2 (C++ edition)
+	=====================================================
 
-Your directory should now contain the following files:
+	Your directory should now contain the following files:
 
- Makefile        -> [course dir]/src/PA2/Makefile
- README
- cool.flex
- test.cl
- lextest.cc      -> [course dir]/src/PA2/lextest.cc
- mycoolc         -> [course dir]/src/PA2/mycoolc
- stringtab.cc    -> [course dir]/src/PA2/stringtab.cc
- utilities.cc    -> [course dir]/src/PA2/utilities.cc
- handle_flags.cc -> [course dir]/src/PA2/handle_flags.cc
- *.d             dependency files
- *.*             other generated files
+	Makefile        -> [course dir]/src/PA2/Makefile
+	README
+	cool.flex
+	test.cl
+	lextest.cc      -> [course dir]/src/PA2/lextest.cc
+	mycoolc         -> [course dir]/src/PA2/mycoolc
+	stringtab.cc    -> [course dir]/src/PA2/stringtab.cc
+	utilities.cc    -> [course dir]/src/PA2/utilities.cc
+	handle_flags.cc -> [course dir]/src/PA2/handle_flags.cc
+	*.d             dependency files
+	*.*             other generated files
 
-The include (.h) files for this assignment can be found in 
-[course dir]/include/PA2
+	The include (.h) files for this assignment can be found in 
+	[course dir]/include/PA2
 
-	The Makefile contains targets for compiling and running your
-	program. DO NOT MODIFY.
+		The Makefile contains targets for compiling and running your
+		program. DO NOT MODIFY.
 
-	The README contains this info. Part of the assignment is to fill
-	the README with the write-up for your project. You should
-	explain design decisions, explain why your code is correct, and
-	why your test cases are adequate. It is part of the assignment
-	to clearly and concisely explain things in text as well as to
-	comment your code. Just edit this file.
+		The README contains this info. Part of the assignment is to fill
+		the README with the write-up for your project. You should
+		explain design decisions, explain why your code is correct, and
+		why your test cases are adequate. It is part of the assignment
+		to clearly and concisely explain things in text as well as to
+		comment your code. Just edit this file.
 
-	cool.flex is a skeleton file for the specification of the
-	lexical analyzer. You should complete it with your regular
-	expressions, patterns and actions. Information on how to do this
-	is in the flex manual, which is part of your reader.
+		cool.flex is a skeleton file for the specification of the
+		lexical analyzer. You should complete it with your regular
+		expressions, patterns and actions. Information on how to do this
+		is in the flex manual, which is part of your reader.
 
-	test.cl is a COOL program that you can test the lexical
-	analyzer on. It contains some errors, so it won't compile with
-	coolc. However, test.cl does not exercise all lexical
-	constructs of COOL and part of your assignment is to rewrite
-	test.cl with a complete set of tests for your lexical analyzer.
+		test.cl is a COOL program that you can test the lexical
+		analyzer on. It contains some errors, so it won't compile with
+		coolc. However, test.cl does not exercise all lexical
+		constructs of COOL and part of your assignment is to rewrite
+		test.cl with a complete set of tests for your lexical analyzer.
 
-	cool-parse.h contains definitions that are used by almost all parts
-	of the compiler. DO NOT MODIFY.
+		cool-parse.h contains definitions that are used by almost all parts
+		of the compiler. DO NOT MODIFY.
 
-	stringtab.{cc|h} and stringtab_functions.h contains functions
-        to manipulate the string tables.  DO NOT MODIFY.
+		stringtab.{cc|h} and stringtab_functions.h contains functions
+			to manipulate the string tables.  DO NOT MODIFY.
 
-	utilities.{cc|h} contains functions used by the main() part of
-	the lextest program. You may want to use the strdup() function
-	defined in here. Remember that you should not print anything
-	from inside cool.flex! DO NOT MODIFY.
+		utilities.{cc|h} contains functions used by the main() part of
+		the lextest program. You may want to use the strdup() function
+		defined in here. Remember that you should not print anything
+		from inside cool.flex! DO NOT MODIFY.
 
-	lextest.cc contains the main function which will call your
-	lexer and print out the tokens that it returns.  DO NOT MODIFY.
+		lextest.cc contains the main function which will call your
+		lexer and print out the tokens that it returns.  DO NOT MODIFY.
 
-	mycoolc is a shell script that glues together the phases of the
-	compiler using Unix pipes instead of statically linking code.  
-	While inefficient, this architecture makes it easy to mix and match
-	the components you write with those of the course compiler.
-	DO NOT MODIFY.	
+		mycoolc is a shell script that glues together the phases of the
+		compiler using Unix pipes instead of statically linking code.  
+		While inefficient, this architecture makes it easy to mix and match
+		the components you write with those of the course compiler.
+		DO NOT MODIFY.	
 
-        cool-lexer.cc is the scanner generated by flex from cool.flex.
-        DO NOT MODIFY IT, as your changes will be overritten the next
-        time you run flex.
+			cool-lexer.cc is the scanner generated by flex from cool.flex.
+			DO NOT MODIFY IT, as your changes will be overritten the next
+			time you run flex.
 
- 	The *.d files are automatically generated Makefiles that capture
- 	dependencies between source and header files in this directory.
- 	These files are updated automatically by Makefile; see the gmake
- 	documentation for a detailed explanation.
+		The *.d files are automatically generated Makefiles that capture
+		dependencies between source and header files in this directory.
+		These files are updated automatically by Makefile; see the gmake
+		documentation for a detailed explanation.
 
-Instructions
-------------
+	Instructions
+	------------
 
-	To compile your lextest program type:
+		To compile your lextest program type:
 
-	% gmake lexer
+		% gmake lexer
 
-	Run your lexer by putting your test input in a file 'foo.cl' and
-	run the lextest program:
+		Run your lexer by putting your test input in a file 'foo.cl' and
+		run the lextest program:
 
-	% ./lexer foo.cl
+		% ./lexer foo.cl
 
-	To run your lexer on the file test.cl type:
+		To run your lexer on the file test.cl type:
 
-	% gmake dotest
+		% gmake dotest
 
-	If you think your lexical analyzer is correct and behaves like
-	the one we wrote, you can actually try 'mycoolc' and see whether
-	it runs and produces correct code for any examples.
-	If your lexical analyzer behaves in an
-	unexpected manner, you may get errors anywhere, i.e. during
-	parsing, during semantic analysis, during code generation or
-	only when you run the produced code on spim. So beware.
+		If you think your lexical analyzer is correct and behaves like
+		the one we wrote, you can actually try 'mycoolc' and see whether
+		it runs and produces correct code for any examples.
+		If your lexical analyzer behaves in an
+		unexpected manner, you may get errors anywhere, i.e. during
+		parsing, during semantic analysis, during code generation or
+		only when you run the produced code on spim. So beware.
 
-	To turnin your work type:
+		To turnin your work type:
 
-	% gmake submit-clean
+		% gmake submit-clean
 
-	And run the "submit" program following the instructions on the
-	course web page.
+		And run the "submit" program following the instructions on thessistir-cruzeiro-x-csa-ao-vivo-online-06112022/
+		course web page.
+		
+		Running "submit" will collect the files cool.flex, test.cl,
+		README, and test.output. Don't forget to edit the README file to
+		include your write-up, and to write your own test cases in
+		test.cl.
+
+		You may turn in the assignment as many times as you like.
+		However, only the last version will be retained for
+		grading.
+
+		If you change architectures you must issue
+
+		% gmake clean
+
+		when you switch from one type of machine to the other.
+		If at some point you get weird errors from the linker,	
+		you probably forgot this step.
+
+		GOOD LUCK!
+
+	---8<------8<------8<------8<---cut here---8<------8<------8<------8<---
+
+	Write-up for PA2
+	----------------
+
+# Design Decisions
+## Definitions
+A comment_val variable was defined to store the depth of the comment, allowing nested comment without errors.
+When a token "(*" is reached, the comment_val is incremented:
+
+	int comment_val = 0;
+
+The regular expressions were defined as follows:
+
+	Digits can be numbers from 0 to 9:
+	DIGIT [0-9] 
+
+	An type identifier starts with an uppercase letter and is followed by letters, numbers or underline:
+	TYPE_ID [A-Z][a-zA-Z0-9_]*
+
+	An object identifier starts with an lowercase letter and is followed by letters, numbers or underline:
+	OBJECT_ID [a-z][a-zA-Z0-9_]*
+
+	A integer is formed by at least one digit:
+	INTEGER {DIGIT}+
+
+The rules for DARROW, ASSIGN, LE, COMMENT_START, COMMENT_END, STRING_DELIMITER were defined as follows:
 	
-	Running "submit" will collect the files cool.flex, test.cl,
-	README, and test.output. Don't forget to edit the README file to
-	include your write-up, and to write your own test cases in
-	test.cl.
+	DARROW            =>
+	ASSIGN            <-
+	LE                <=
+	COMMENT_START     ("(*")
+	COMMENT_END       ("*)")
+	STRING_DELIMITER  "\""
 
- 	You may turn in the assignment as many times as you like.
-	However, only the last version will be retained for
-	grading.
+The defined states of the lexer were:
 
-	If you change architectures you must issue
+	When a comment starts:
+	COMMENT
 
-	% gmake clean
+	When a string starts:
+	STRING
 
-	when you switch from one type of machine to the other.
-	If at some point you get weird errors from the linker,	
-	you probably forgot this step.
+	When an error is found in a string:
+	STRING_ERROR
 
-	GOOD LUCK!
+## Rules
 
----8<------8<------8<------8<---cut here---8<------8<------8<------8<---
+Rules for returning tokens for main symbols and operators:
 
-Write-up for PA2
-----------------
+	{DARROW}  { return (DARROW); }
+	{ASSIGN}  { return (ASSIGN);}
+	{LE} 	  { return (LE);}
+	"+" {return '+';}
+	"-" {return '-';}
+	"*" {return '*';}
+	"/" {return '/';}
+	"~" {return '~';}
+	"=" {return '=';}
+	"(" {return '(';}
+	")" {return ')';}
+	"{" {return '{';}
+	"}" {return '}';}
+	"@" {return '@';}
+	":" {return ':';}
+	";" {return ';';}
+	"." {return '.';}
+	"," {return ',';}
+	"<" {return '<';}
+
+Rules for returning tokens and values for keywords that handle case-sensitive booleans:
+
+	t(?i:rue) {
+		cool_yylval.boolean = true;
+		return BOOL_CONST;
+	}
+
+	f(?i:alse) {
+		cool_yylval.boolean = false;
+		return BOOL_CONST;
+	}  
+	(?i:class) {return CLASS;}
+	(?i:else) {return ELSE;}
+	(?i:fi) {return FI;}
+	(?i:if) {return IF;}
+	(?i:in) {return IN;}
+	(?i:inherits) {return INHERITS;}
+	(?i:isvoid) {return ISVOID;}
+	(?i:let) {return LET;}
+	(?i:loop) {return LOOP;}
+	(?i:pool) {return POOL;}
+	(?i:then) {return THEN;}
+	(?i:while) {return WHILE;}
+	(?i:case) {return CASE;}
+	(?i:esac) {return ESAC;}
+	(?i:new) {return NEW;}
+	(?i:of) {return OF;}
+	(?i:not) {return NOT;}
+ 
+Rules for returning identifiers's tokens and add the values to the stringtable:
+
+	{TYPE_ID} {
+		cool_yylval.symbol = stringtable.add_string(yytext);
+		return TYPEID;
+	}
+
+	{OBJECT_ID} {
+		cool_yylval.symbol = stringtable.add_string(yytext);
+		return OBJECTID;
+	}
+
+Rule for returning the integer token with the respective value:
+
+	{INTEGER} { cool_yylval.symbol = inttable.add_string(yytext); return INT_CONST; }
+
+### Rules for commenting logic:
+
+Return error for unmached end of comment:
+	
+	{COMMENT_END} {
+  	yylval.error_msg = "Unmatched *)";
+  	return ERROR;
+	}
+
+Condition for start a comment:
+
+	{COMMENT_START} { 
+	comment_val = 1;
+	BEGIN(COMMENT);	
+	}
+
+Comment inside the comment:
+
+	<COMMENT>{COMMENT_START} {
+	comment_val++;
+	}
+
+Comment ends. If is a subcomment, just decrease the depth and continue. Else, finish the comment:
+
+	<COMMENT>{COMMENT_END} {
+	comment_val--;
+	if (comment_val == 0) 
+		BEGIN(INITIAL);
+	}
+
+Returning an error when a comment reaches the End Of File:
+
+	<COMMENT><<EOF>> {
+	BEGIN(INITIAL);
+	yylval.error_msg = "EOF in comment";
+	return ERROR;
+	}
+
+Allowing to skip lines in comment:
+
+	<COMMENT>\n {
+	curr_lineno++;
+	}
+
+Allowing any character that does not match the rules above:
+
+	<COMMENT>. {} 
+
+### Rules for string constant logic:
+
+Condition for start a string:
+
+	{STRING_DELIMITER} {
+	string_buf_ptr = string_buf;
+	BEGIN(STRING);
+	}
+
+Condition for close a string and add it to stringtable when a quote is reached:
+
+	<STRING>{STRING_DELIMITER} {
+	BEGIN(INITIAL);
+	(*string_buf_ptr) = '\0';
+	cool_yylval.symbol = stringtable.add_string(string_buf);
+	return STR_CONST;
+	}
+
+Condition for allowing endline in a string by inserting a \ before the line break:
+
+	<STRING>"\\"\n {
+	curr_lineno++;
+	if (string_buf_ptr - string_buf > MAX_STR_CONST - 2) {
+		BEGIN(STRING_ERROR);
+		yylval.error_msg = "String constant too long";
+		return ERROR;
+	}
+	*(string_buf_ptr++) = '\n';
+	}
+
+Return an error if the string reaches the End Of File:
+
+	<STRING><<EOF>> {
+	yylval.error_msg = "EOF in string constant";
+	return ERROR;
+	}
+
+Return an error if the string reaches the end of line:
+
+	<STRING>\n {
+	curr_lineno++;
+	string_buf_ptr = string_buf;
+	BEGIN(INITIAL);
+	yylval.error_msg = "Unterminated string constant";
+	return ERROR;
+	}
+
+Return an error if the string contains the null character:
+
+	<STRING>\0 {
+	BEGIN(STRING_ERROR);
+	yylval.error_msg = "String contains null character";
+	return ERROR;
+	}
+
+Logic for recognizing \b, \t, \f, \n and converting the general cases:
+
+	<STRING>\\. {
+	if (string_buf_ptr - string_buf > MAX_STR_CONST - 2) {
+		BEGIN(STRING_ERROR);
+		yylval.error_msg = "String constant too long";
+		return ERROR;
+	}
+	if (yytext[1] == '\0') {
+		yylval.error_msg = "String contains null character";
+		BEGIN(STRING_ERROR);
+		return (ERROR);
+	} 
+	else if (yytext[1] == 'b') {
+		(*string_buf_ptr++) = '\b';
+	} 
+	else if (yytext[1] == 't') {
+		(*string_buf_ptr++) = '\t';
+	}
+	else if (yytext[1] == 'f') {
+		(*string_buf_ptr++) = '\f';
+	}  
+	else if (yytext[1] == 'n') {
+		(*string_buf_ptr++) = '\n';
+	} 
+	else {
+		(*string_buf_ptr++) = yytext[1];
+	}
+	}
+
+Accepting any character not matched in the rules above if it doesn't cause an error:
+
+	<STRING>.                {
+	if (string_buf_ptr - string_buf > MAX_STR_CONST - 2) {
+		BEGIN(STRING_ERROR);
+		yylval.error_msg = "String constant too long";
+		return ERROR;
+	}
+	*(string_buf_ptr++) = yytext[0];
+	}
+
+Condition called when an error is found in the string. It stops when reaches a quote, break line or End of File:
+
+	<STRING_ERROR>{STRING_DELIMITER} {
+	BEGIN(INITIAL);
+	}
+
+	<STRING_ERROR>\n {
+	BEGIN(INITIAL);
+	}
+
+	<STRING_ERROR><<EOF>> {return 0;}
+	<STRING_ERROR>. {}
+
+### Rules for whitespaces and invalid characters
+
+If an endline is reached, just update the variable curr_lineno:
+
+	\n              { curr_lineno++; }
+
+Any other whitespace iss accepted, but no action is needed:
+
+	[ \t\r\v\f]+    {} 
+
+Any character that doesn't match with any rule above is an invalid character, and an error should be returned:
+
+	. { 
+	yylval.error_msg = yytext;
+	return ERROR;
+	}
+
+# Tests
+
+Testing the unmatched end of comment:
+
+	*)
+
+Testing if the conversion is working in general case inside a string and returning \n \b \t \f in the specific cases:
+
+	"\0\\1\2\3\\4\\\5\\n\b\t\f\0\9\h\l\s"
+
+Breaking line special character inside a string:
+
+	"Breaking line in a string \n line break"
+
+The symbol ! returns an error, and "variavel", "=", "4" are valid tokens:
+
+	!variavel = 4
+
+All symbols are valid tokens, but "_" returns an error:
+
+	_variavel = 5
+
+Testing quotes inside a string with escape character:
+
+	" These are two quotes \"inside the string\""
+
+The greater than signal wasn't defined, so it returns an error:
+
+	3 > 5
+
+The greater than signal works inside a string:
+
+	greaterTesting_than = ">"
+
+Continue the string in a new line is allowed with the escape character:
+
+	"End line inside \
+	the string"
+
+The biggest string returns an error:
+
+	"THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!"
+
+An object id followed by a point and another object id is allowed:
+
+	object.property.get_property()
+
+3three is a lexical valid sentence, but generate a token for an integer and a token for the identifier:
+
+	3three (* this is valid *)
+
+invalid-identifier generates two identifiers and a "-" token:
+
+	invalid-identifier
+
+gabriel&mariano generates two identifiers and a "&" token:
+
+	gabriel&mariano
+
+Comments inside string are allowed:
+
+	"I will comment inside (*this string *)"
+
+Keywords generate a specific token:
+
+	class else fi if in inherits isvoid let loop then while case esac new of not
+
+Boolean keywords need to starts with lowercase letter:
+
+	true false tRUe fALse
+
+The code below returns two type identifiers:
+
+	True False
+
+All these keywords are normally accepted by the lexer:
+
+	clASS ELse FI iF IN inheRIts iSVoid Let lOOp tHEN wHIle CAse eSAc NEW OF nOT
+
+The string returns an error if it reaches the end of the file:
+
+	"Goodbye this is the End of File...
