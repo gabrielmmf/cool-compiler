@@ -130,21 +130,25 @@ When a token "(*" is reached, the comment_val is incremented:
 
 	int comment_val = 0;
 
-The regular expressions were defined as follows:
+**The regular expressions were defined as follows:**
 
-	Digits can be numbers from 0 to 9:
+Digits can be numbers from 0 to 9:
+
 	DIGIT [0-9] 
 
-	An type identifier starts with an uppercase letter and is followed by letters, numbers or underline:
+An type identifier starts with an uppercase letter and is followed by letters, numbers or underline:
+
 	TYPE_ID [A-Z][a-zA-Z0-9_]*
 
-	An object identifier starts with an lowercase letter and is followed by letters, numbers or underline:
+An object identifier starts with an lowercase letter and is followed by letters, numbers or underline:
+	
 	OBJECT_ID [a-z][a-zA-Z0-9_]*
 
-	A integer is formed by at least one digit:
+A integer is formed by at least one digit:
+	
 	INTEGER {DIGIT}+
 
-The rules for DARROW, ASSIGN, LE, COMMENT_START, COMMENT_END, STRING_DELIMITER were defined as follows:
+**The rules for DARROW, ASSIGN, LE, COMMENT_START, COMMENT_END, STRING_DELIMITER were defined as follows:**
 	
 	DARROW            =>
 	ASSIGN            <-
@@ -153,7 +157,7 @@ The rules for DARROW, ASSIGN, LE, COMMENT_START, COMMENT_END, STRING_DELIMITER w
 	COMMENT_END       ("*)")
 	STRING_DELIMITER  "\""
 
-The defined states of the lexer were:
+**The defined states of the lexer were:**
 
 When a comment starts:
 
@@ -169,7 +173,7 @@ When an error is found in a string:
 
 ## Rules
 
-Rules for returning tokens for main symbols and operators:
+**Rules for returning tokens for main symbols and operators:**
 
 	{DARROW}  { return (DARROW); }
 	{ASSIGN}  { return (ASSIGN);}
@@ -191,7 +195,7 @@ Rules for returning tokens for main symbols and operators:
 	"," {return ',';}
 	"<" {return '<';}
 
-Rules for returning tokens and values for keywords that handle case-sensitive booleans:
+**Rules for returning tokens and values for keywords that handle case-sensitive booleans:**
 
 	t(?i:rue) {
 		cool_yylval.boolean = true;
@@ -220,7 +224,7 @@ Rules for returning tokens and values for keywords that handle case-sensitive bo
 	(?i:of) {return OF;}
 	(?i:not) {return NOT;}
  
-Rules for returning identifiers's tokens and add the values to the stringtable:
+**Rules for returning identifiers's tokens and add the values to the stringtable:**
 
 	{TYPE_ID} {
 		cool_yylval.symbol = stringtable.add_string(yytext);
@@ -232,33 +236,33 @@ Rules for returning identifiers's tokens and add the values to the stringtable:
 		return OBJECTID;
 	}
 
-Rule for returning the integer token with the respective value:
+**Rule for returning the integer token with the respective value:**
 
 	{INTEGER} { cool_yylval.symbol = inttable.add_string(yytext); return INT_CONST; }
 
 ### Rules for commenting logic:
 
-Return error for unmached end of comment:
+**Return error for unmached end of comment:**
 	
 	{COMMENT_END} {
   	yylval.error_msg = "Unmatched *)";
   	return ERROR;
 	}
 
-Condition for start a comment:
+**Condition for start a comment:**
 
 	{COMMENT_START} { 
 	comment_val = 1;
 	BEGIN(COMMENT);	
 	}
 
-Comment inside the comment:
+**Comment inside the comment:**
 
 	<COMMENT>{COMMENT_START} {
 	comment_val++;
 	}
 
-Comment ends. If is a subcomment, just decrease the depth and continue. Else, finish the comment:
+**Comment ends. If is a subcomment, just decrease the depth and continue. Else, finish the comment:**
 
 	<COMMENT>{COMMENT_END} {
 	comment_val--;
@@ -266,7 +270,7 @@ Comment ends. If is a subcomment, just decrease the depth and continue. Else, fi
 		BEGIN(INITIAL);
 	}
 
-Returning an error when a comment reaches the End Of File:
+**Returning an error when a comment reaches the End Of File:**
 
 	<COMMENT><<EOF>> {
 	BEGIN(INITIAL);
@@ -274,26 +278,26 @@ Returning an error when a comment reaches the End Of File:
 	return ERROR;
 	}
 
-Allowing to skip lines in comment:
+**Allowing to skip lines in comment:**
 
 	<COMMENT>\n {
 	curr_lineno++;
 	}
 
-Allowing any character that does not match the rules above:
+**Allowing any character that does not match the rules above:**
 
 	<COMMENT>. {} 
 
 ### Rules for string constant logic:
 
-Condition for start a string:
+**Condition for start a string:**
 
 	{STRING_DELIMITER} {
 	string_buf_ptr = string_buf;
 	BEGIN(STRING);
 	}
 
-Condition for close a string and add it to stringtable when a quote is reached:
+**Condition for close a string and add it to stringtable when a quote is reached:**
 
 	<STRING>{STRING_DELIMITER} {
 	BEGIN(INITIAL);
@@ -302,7 +306,7 @@ Condition for close a string and add it to stringtable when a quote is reached:
 	return STR_CONST;
 	}
 
-Condition for allowing endline in a string by inserting a \ before the line break:
+**Condition for allowing endline in a string by inserting a \ before the line break:**
 
 	<STRING>"\\"\n {
 	curr_lineno++;
@@ -314,14 +318,14 @@ Condition for allowing endline in a string by inserting a \ before the line brea
 	*(string_buf_ptr++) = '\n';
 	}
 
-Return an error if the string reaches the End Of File:
+**Return an error if the string reaches the End Of File:**
 
 	<STRING><<EOF>> {
 	yylval.error_msg = "EOF in string constant";
 	return ERROR;
 	}
 
-Return an error if the string reaches the end of line:
+**Return an error if the string reaches the end of line:**
 
 	<STRING>\n {
 	curr_lineno++;
@@ -331,7 +335,7 @@ Return an error if the string reaches the end of line:
 	return ERROR;
 	}
 
-Return an error if the string contains the null character:
+**Return an error if the string contains the null character:**
 
 	<STRING>\0 {
 	BEGIN(STRING_ERROR);
@@ -339,7 +343,7 @@ Return an error if the string contains the null character:
 	return ERROR;
 	}
 
-Logic for recognizing \b, \t, \f, \n and converting the general cases:
+**Logic for recognizing \b, \t, \f, \n and converting the general cases:**
 
 	<STRING>\\. {
 	if (string_buf_ptr - string_buf > MAX_STR_CONST - 2) {
@@ -369,7 +373,7 @@ Logic for recognizing \b, \t, \f, \n and converting the general cases:
 	}
 	}
 
-Accepting any character not matched in the rules above if it doesn't cause an error:
+**Accepting any character not matched in the rules above if it doesn't cause an error:**
 
 	<STRING>.                {
 	if (string_buf_ptr - string_buf > MAX_STR_CONST - 2) {
@@ -380,7 +384,7 @@ Accepting any character not matched in the rules above if it doesn't cause an er
 	*(string_buf_ptr++) = yytext[0];
 	}
 
-Condition called when an error is found in the string. It stops when reaches a quote, break line or End of File:
+**Condition called when an error is found in the string. It stops when reaches a quote, break line or End of File:**
 
 	<STRING_ERROR>{STRING_DELIMITER} {
 	BEGIN(INITIAL);
@@ -395,15 +399,15 @@ Condition called when an error is found in the string. It stops when reaches a q
 
 ### Rules for whitespaces and invalid characters
 
-If an endline is reached, just update the variable curr_lineno:
+**If an endline is reached, just update the variable curr_lineno:**
 
 	\n              { curr_lineno++; }
 
-Any other whitespace iss accepted, but no action is needed:
+**Any other whitespace iss accepted, but no action is needed:**
 
 	[ \t\r\v\f]+    {} 
 
-Any character that doesn't match with any rule above is an invalid character, and an error should be returned:
+**Any character that doesn't match with any rule above is an invalid character, and an error should be returned:**
 
 	. { 
 	yylval.error_msg = yytext;
@@ -412,83 +416,83 @@ Any character that doesn't match with any rule above is an invalid character, an
 
 # Tests
 
-Testing the unmatched end of comment:
+**Testing the unmatched end of comment:**
 
 	*)
 
-Testing if the conversion is working in general case inside a string and returning \n \b \t \f in the specific cases:
+**Testing if the conversion is working in general case inside a string and returning \n \b \t \f in the specific cases:**
 
 	"\0\\1\2\3\\4\\\5\\n\b\t\f\0\9\h\l\s"
 
-Breaking line special character inside a string:
+**Breaking line special character inside a string:**
 
 	"Breaking line in a string \n line break"
 
-The symbol ! returns an error, and "variavel", "=", "4" are valid tokens:
+**The symbol ! returns an error, and "variavel", "=", "4" are valid tokens:**
 
 	!variavel = 4
 
-All symbols are valid tokens, but "_" returns an error:
+**All symbols are valid tokens, but "_" returns an error:**
 
 	_variavel = 5
 
-Testing quotes inside a string with escape character:
+**Testing quotes inside a string with escape character:**
 
 	" These are two quotes \"inside the string\""
 
-The greater than signal wasn't defined, so it returns an error:
+**The greater than signal wasn't defined, so it returns an error:**
 
 	3 > 5
 
-The greater than signal works inside a string:
+**The greater than signal works inside a string:**
 
 	greaterTesting_than = ">"
 
-Continue the string in a new line is allowed with the escape character:
+**Continue the string in a new line is allowed with the escape character:**
 
 	"End line inside \
 	the string"
 
-The biggest string returns an error:
+**This long string constant returns an error:**
 
 	"THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!   THIS IS THE BIGGEST STRING!!!"
 
-An object id followed by a point and another object id is allowed:
+**An object id followed by a point and another object id is allowed:**
 
 	object.property.get_property()
 
-3three is a lexical valid sentence, but generate a token for an integer and a token for the identifier:
+**3three is a lexical valid sentence, but generate a token for an integer and a token for the identifier:**
 
 	3three (* this is valid *)
 
-invalid-identifier generates two identifiers and a "-" token:
+**invalid-identifier generates two identifiers and a "-" token:**
 
 	invalid-identifier
 
-gabriel&mariano generates two identifiers and a "&" token:
+**gabriel&mariano generates two identifiers and a "&" token:**
 
 	gabriel&mariano
 
-Comments inside string are allowed:
+**Comments inside string are allowed:**
 
 	"I will comment inside (*this string *)"
 
-Keywords generate a specific token:
+**Keywords generate a specific token:**
 
 	class else fi if in inherits isvoid let loop then while case esac new of not
 
-Boolean keywords need to starts with lowercase letter:
+**Boolean keywords need to starts with lowercase letter:**
 
 	true false tRUe fALse
 
-The code below returns two type identifiers:
+**The code below returns two type identifiers:**
 
 	True False
 
-All these keywords are normally accepted by the lexer:
+**All these keywords are normally accepted by the lexer:**
 
 	clASS ELse FI iF IN inheRIts iSVoid Let lOOp tHEN wHIle CAse eSAc NEW OF nOT
 
-The string returns an error if it reaches the end of the file:
+**The string returns an error if it reaches the end of the file:**
 
 	"Goodbye this is the End of File...
