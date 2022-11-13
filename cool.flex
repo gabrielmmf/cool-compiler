@@ -147,8 +147,7 @@ f(?i:alse) {
   */
 
 {COMMENT_END} {
-  char error_message[] = "Unmatched *)";
-  yylval.error_msg = error_message;
+  yylval.error_msg = "Unmatched *)";
   return ERROR;
 }
 
@@ -162,7 +161,6 @@ f(?i:alse) {
   comment_val++;
 }
 
- /* TESTAR ERRO DE UNMATCHED COMMENT DEPOIS DE UM COMENTÁRIO */
 <COMMENT>{COMMENT_END} {
   comment_val--;
   if (comment_val == 0) 
@@ -171,8 +169,7 @@ f(?i:alse) {
 
 <COMMENT><<EOF>> {
   BEGIN(INITIAL);
-  char error_message[] = "EOF in comment";
-  yylval.error_msg = error_message;
+  yylval.error_msg = "EOF in comment";
   return ERROR;
 }
 
@@ -204,18 +201,16 @@ f(?i:alse) {
 
 <STRING>"\\"\n {
   curr_lineno++;
-  if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
+  if (string_buf_ptr - string_buf > MAX_STR_CONST - 2) {
     BEGIN(STRING_ERROR);
-    char error_message[] = "String constant too long";
-    yylval.error_msg = error_message;
+    yylval.error_msg = "String constant too long";
     return ERROR;
   }
   *(string_buf_ptr++) = '\n';
 }
 
 <STRING><<EOF>> {
-  char error_message[] = "EOF in string constant";
-  yylval.error_msg = error_message;
+  yylval.error_msg = "EOF in string constant";
   return ERROR;
 }
 
@@ -223,48 +218,48 @@ f(?i:alse) {
   curr_lineno++;
   string_buf_ptr = string_buf;
   BEGIN(INITIAL);
-  char error_message[] = "Unterminated string constant";
-  yylval.error_msg = error_message;
+  yylval.error_msg = "Unterminated string constant";
   return ERROR;
 }
 
 <STRING>\0 {
   BEGIN(STRING_ERROR);
-  char error_message[] = "String contains null character";
-  yylval.error_msg = error_message;
+  yylval.error_msg = "String contains null character";
   return ERROR;
 }
 
 <STRING>\\. {
-  if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
+  if (string_buf_ptr - string_buf > MAX_STR_CONST - 2) {
     BEGIN(STRING_ERROR);
-    char error_message[] = "String constant too long";
-    yylval.error_msg = error_message;
+    yylval.error_msg = "String constant too long";
     return ERROR;
   }
-  if (yytext[1] == 'b') {
-    (*string_buf_ptr++) = '\b';
-  } else if (yytext[1] == 't') {
-    (*string_buf_ptr++) = '\t';
-  } else if (yytext[1] == 'n') {
-    (*string_buf_ptr++) = '\n';
-  } else if (yytext[1] == 'f') {
-    (*string_buf_ptr++) = '\f';
-  } else if (yytext[1] == '\0') {
-    char error_message[] = "String contains null character";
-    yylval.error_msg = error_message;
+  if (yytext[1] == '\0') {
+    yylval.error_msg = "String contains null character";
     BEGIN(STRING_ERROR);
     return (ERROR);
-  } else {
+  } 
+  else if (yytext[1] == 'b') {
+    (*string_buf_ptr++) = '\b';
+  } 
+  else if (yytext[1] == 't') {
+    (*string_buf_ptr++) = '\t';
+  }
+  else if (yytext[1] == 'f') {
+    (*string_buf_ptr++) = '\f';
+  }  
+  else if (yytext[1] == 'n') {
+    (*string_buf_ptr++) = '\n';
+  } 
+  else {
     (*string_buf_ptr++) = yytext[1];
   }
 }
 
 <STRING>.                {
-  if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
+  if (string_buf_ptr - string_buf > MAX_STR_CONST - 2) {
     BEGIN(STRING_ERROR);
-    char error_message[] = "String constant too long";
-    yylval.error_msg = error_message;
+    yylval.error_msg = "String constant too long";
     return ERROR;
   }
   *(string_buf_ptr++) = yytext[0];
