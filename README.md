@@ -96,8 +96,7 @@
 
 		% gmake submit-clean
 
-		And run the "submit" program following the instructions on thessistir-cruzeiro-x-csa-ao-vivo-online-06112022/
-		course web page.
+		And run the "submit" program following the instructions on the course web page.
 		
 		Running "submit" will collect the files cool.flex, test.cl,
 		README, and test.output. Don't forget to edit the README file to
