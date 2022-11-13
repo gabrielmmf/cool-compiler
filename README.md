@@ -131,7 +131,7 @@ When a token "(*" is reached, the comment_val is incremented:
 
 **The regular expressions were defined as follows:**
 
-Digits can be numbers from 0 to 9:
+Digits can be integers from 0 to 9:
 
 	DIGIT [0-9] 
 
