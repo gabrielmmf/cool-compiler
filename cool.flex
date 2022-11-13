@@ -1,3 +1,4 @@
+%option noyywrap
 /*
  *  The scanner definition for COOL.
  */
@@ -12,11 +13,11 @@
 #include <stringtab.h>
 #include <utilities.h>
 
-/* The compiler assumes these identifiers. */
+ /* The compiler assumes these identifiers. */
 #define yylval cool_yylval
 #define yylex  cool_yylex
 
-/* Max size of string constants */
+ /* Max size of string constants */
 #define MAX_STR_CONST 1025
 #define YY_NO_UNPUT   /* keep g++ happy */
 
@@ -42,7 +43,6 @@ extern YYSTYPE cool_yylval;
 /*
  *  Add Your own definitions here
  */
-
  /* ADICIONADO POR TZ; */
 
 /* Varieble to store the number of subcomments */
@@ -50,9 +50,6 @@ extern YYSTYPE cool_yylval;
 
  
  /* Macro for send errors */
- #define RETURN_ERROR(msg) \
-	       yylval.error_msg = msg;\
-	       return ERROR;
 
  /* FIM DA ADIÇÃO DE TZ */
 
@@ -61,7 +58,6 @@ extern YYSTYPE cool_yylval;
 /*
  * Define names for regular expressions here.		
  */
-
 DIGIT [0-9]
 TYPE_ID [A-Z][a-zA-Z0-9_]*
 OBJECT_ID [a-z][a-zA-Z0-9_]*
@@ -70,6 +66,7 @@ INTEGER {DIGIT}+
 DARROW          =>
 
 /* ADICIONADO POR TZ: */
+
 
 ASSIGN               <-
 LE                   <=
@@ -86,34 +83,34 @@ STRING_DELIMITER         "\""
 /* FIM DA ADIÇÃO DE TZ */
 
 %%
-/* ADICIONADO POR TZ */
+ /* ADICIONADO POR TZ */
 
 \n              { curr_lineno++; }
 [ \t\r\v\f]+    {} 
 
-/* FIM DA ADIÇÃO DE TZ */
+ /* FIM DA ADIÇÃO DE TZ */
 
  /*
   *  Nested comments
   */
 
-/* ADICIONADO POR TZ */
+ /* ADICIONADO POR TZ */
 
-/* VERIFY UNMATCHED COMMENT */
+ /* VERIFY UNMATCHED COMMENT */
 {COMMENT_END} {
-  RETURN_ERROR("Unexpected end of commentary")
+  RETURN_ERROR("Unmatched *)");
 }
 
 {COMMENT_START} { 
   BEGIN(COMMENT);
-  comment_val = 1
+  comment_val = 1;
 }
 
-<COMMENT>{COMMENT_START}{
+<COMMENT>{COMMENT_START} {
   comment_val++;
 }
 
-<COMMENT>{COMMENT_END}{
+<COMMENT>{COMMENT_END} {
   comment_val--;
   if (comment_val == 0) 
     BEGIN(INITIAL);
@@ -124,54 +121,54 @@ STRING_DELIMITER         "\""
 }
 
 <COMMENT><<EOF>> {
-  BEGIN(INITIAL)
-  RETURN_ERROR("Comment reached the End Of File")
+  BEGIN(INITIAL);
+  RETURN_ERROR("EOF in comment");
 }
 
-/* FIM DA ADIÇÃO DE TZ */
+ /* FIM DA ADIÇÃO DE TZ */
 
 
  /*
   *  The multiple-character operators.
   */
-"+" {return '+';}
-"-" {return '-';}
-"*" {return "*";}
-"/" {return "/";}
-"=" {return "=";}
-"(" {return '(';}
-")" {return ')';}
-"{" {return '{';}
-"}" {return '}';}
-"@" {return '@';}
-":" {return ':';}
-";" {return ';';}
-'.' {return '.';}
-',' {return ',';}
-'<' {return '<';}
-'~' {return '~';}
+ "+" {return '+';}
+ "-" {return '-';}
+ "*" {return '*';}
+ "/" {return '/';}
+ "=" { return '='; }
+ "(" {return '(';}
+ ")" {return ')';}
+ "{" {return '{';}
+ "}" {return '}';}
+ "@" {return '@';}
+ ":" {return ':';}
+ ";" {return ';';}
+ "." {return '.';}
+ "," {return ',';}
+ "<" {return '<';}
+ "~" {return '~';}
 
 {DARROW}		{ return (DARROW); }
 
-/*ADICIONADO POR TZ: */
+ /*ADICIONADO POR TZ: */
 
 {ASSIGN} { return (ASSIGN);}
 {LE} { return (LE);}
 {INTEGER} { cool_yylval.symbol = inttable.add_string(yytext); return INT_CONST; }
 
-/* FIM DA ADIÇÃO DE TZ */
+ /* FIM DA ADIÇÃO DE TZ */
 
  /*
   * Keywords are case-insensitive except for the values true and false,
   * which must begin with a lower-case letter.
   */
 
-(t)(?i:rue){
+t(?i:rue) {
     cool_yylval.boolean = true;
     return BOOL_CONST;
 }
 
-(f)(?i:alse){
+f(?i:alse) {
     cool_yylval.boolean = false;
     return BOOL_CONST;
 }  
@@ -194,24 +191,24 @@ STRING_DELIMITER         "\""
 (?i:new) {return NEW;}
 (?i:not) {return NOT;}
 
-/* ADICIONADO POR TZ */
+ /* ADICIONADO POR TZ */
 
-{TYPE_ID}{
-  cool_yylval.symbol = stringtable.add_string(yytext);
-	return TYPE_ID;
+{TYPE_ID} {
+  	cool_yylval.symbol = stringtable.add_string(yytext);
+	return TYPEID;
 }
 
 {OBJECT_ID} {
 	cool_yylval.symbol = stringtable.add_string(yytext);
-	return OBJECT_ID;
+	return OBJECTID;
 }
 
 
-/* Any character that disrespect above rules throws an error: */
+ /* Any character that disrespect above rules throws an error: */
 
 . { RETURN_ERROR(yytext) }
 
-/*FIM DA ADIÇÃO DE TZ */
+ /*FIM DA ADIÇÃO DE TZ */
 
  /*
   *  String constants (C syntax)
@@ -220,7 +217,7 @@ STRING_DELIMITER         "\""
   *
   */
 
-/* ADICIONADO POR TZ */
+ /* ADICIONADO POR TZ */
 
 {STRING_DELIMITER} {
   string_buf_ptr = string_buf;
@@ -231,38 +228,38 @@ STRING_DELIMITER         "\""
   BEGIN(INITIAL);
   (*string_buf_ptr) = '\0';
   cool_yylval.symbol = stringtable.add_string(string_buf);
-  return STR_CONST
+  return STR_CONST;
 }
 
 <STRING>"\\"\n {
   curr_lineno++;
   if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
     BEGIN(STRING_ERROR);
-    RETURN_ERROR("String too much long")
+    RETURN_ERROR("String constant too long")
   }
   *(string_buf_ptr++) = '\n';
 }
 
 <STRING><<EOF>> {
-  RETURN_ERROR("String reache End Of File");
+  RETURN_ERROR("EOF in string constant");
 }
 
 <STRING>\n {
   curr_lineno++;
   string_buf_ptr = string_buf;
   BEGIN(INITIAL);
-  RETURN_ERROR("Unterminated string");
+  RETURN_ERROR("Unterminated string constant");
 }
 
 <STRING>\0 {
   BEGIN(STRING_ERROR);
-  SET_ERROR("String contains null character");
+  RETURN_ERROR("String contains null character");
 }
 
 <STRING>\\. {
   if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
     BEGIN(STRING_ERROR);
-    RETURN_ERROR("String constant too much long");
+    RETURN_ERROR("String constant too long");
   }
   if (yytext[1] == 'b') {
     (*string_buf_ptr++) = '\b';
@@ -284,12 +281,12 @@ STRING_DELIMITER         "\""
 <STRING>.                {
   if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
     BEGIN(STRING_ERROR);
-    RETURN_ERROR("String constant too much long");
+    RETURN_ERROR("String constant too long");
   }
   *(string_buf_ptr++) = yytext[0];
 }
 
-<STRING_ERROR>{STRING_DELIMITER}{
+<STRING_ERROR>{STRING_DELIMITER} {
   BEGIN(INITIAL);
 }
 
@@ -301,7 +298,7 @@ STRING_DELIMITER         "\""
 <STRING_ERROR>. {}
 
 
-/* FIM DA ADIÇÃO DE TZ */
+ /* FIM DA ADIÇÃO DE TZ */
 
 
 %%
