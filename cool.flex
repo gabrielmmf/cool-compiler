@@ -98,7 +98,8 @@ STRING_DELIMITER         "\""
 
  /* VERIFY UNMATCHED COMMENT */
 {COMMENT_END} {
-  RETURN_ERROR("Unmatched *)");
+  yylval.error_msg = "Unmatched *)";
+  return ERROR;
 }
 
 {COMMENT_START} { 
@@ -122,7 +123,8 @@ STRING_DELIMITER         "\""
 
 <COMMENT><<EOF>> {
   BEGIN(INITIAL);
-  RETURN_ERROR("EOF in comment");
+  yylval.error_msg = "EOF in comment";
+  return ERROR;
 }
 
  /* FIM DA ADIÇÃO DE TZ */
@@ -206,7 +208,10 @@ f(?i:alse) {
 
  /* Any character that disrespect above rules throws an error: */
 
-. { RETURN_ERROR(yytext) }
+. { 
+  yylval.error_msg = yytext
+  return ERROR;
+ }
 
  /*FIM DA ADIÇÃO DE TZ */
 
@@ -235,31 +240,36 @@ f(?i:alse) {
   curr_lineno++;
   if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
     BEGIN(STRING_ERROR);
-    RETURN_ERROR("String constant too long")
+    yylval.error_msg = "String constant too long";
+    return ERROR;
   }
   *(string_buf_ptr++) = '\n';
 }
 
 <STRING><<EOF>> {
-  RETURN_ERROR("EOF in string constant");
+  yylval.error_msg = "EOF in string constant";
+  return ERROR;
 }
 
 <STRING>\n {
   curr_lineno++;
   string_buf_ptr = string_buf;
   BEGIN(INITIAL);
-  RETURN_ERROR("Unterminated string constant");
+  yylval.error_msg = "Unterminated string constant";
+  return ERROR;
 }
 
 <STRING>\0 {
   BEGIN(STRING_ERROR);
-  RETURN_ERROR("String contains null character");
+  yylval.error_msg = "String contains null character";
+  return ERROR;
 }
 
 <STRING>\\. {
   if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
     BEGIN(STRING_ERROR);
-    RETURN_ERROR("String constant too long");
+    yylval.error_msg = "String constant too long";
+    return ERROR;
   }
   if (yytext[1] == 'b') {
     (*string_buf_ptr++) = '\b';
@@ -281,7 +291,8 @@ f(?i:alse) {
 <STRING>.                {
   if (string_buf_ptr - string_buf + 2 > MAX_STR_CONST) {
     BEGIN(STRING_ERROR);
-    RETURN_ERROR("String constant too long");
+    yylval.error_msg = "String constant too long";
+    return ERROR;
   }
   *(string_buf_ptr++) = yytext[0];
 }
