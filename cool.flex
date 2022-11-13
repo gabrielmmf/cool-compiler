@@ -43,33 +43,23 @@ extern YYSTYPE cool_yylval;
 /*
  *  Add Your own definitions here
  */
- /* ADICIONADO POR TZ; */
 
-/* Varieble to store the number of subcomments */
- int comment_val = 0
-
- 
- /* Macro for send errors */
-
- /* FIM DA ADIÇÃO DE TZ */
+ int comment_val = 0;
 
 %}
 
 /*
  * Define names for regular expressions here.		
  */
+ 
 DIGIT [0-9]
 TYPE_ID [A-Z][a-zA-Z0-9_]*
 OBJECT_ID [a-z][a-zA-Z0-9_]*
 INTEGER {DIGIT}+
 
 DARROW          =>
-
-/* ADICIONADO POR TZ: */
-
-
-ASSIGN               <-
-LE                   <=
+ASSIGN          <-
+LE              <=
 
 COMMENT_START        ("(*")
 COMMENT_END          ("*)")
@@ -78,66 +68,23 @@ STRING_DELIMITER         "\""
 
 
 /* STATES OF THE LEXER */
+
 %x COMMENT STRING STRING_ERROR
 
-/* FIM DA ADIÇÃO DE TZ */
-
 %%
- /* ADICIONADO POR TZ */
-
-\n              { curr_lineno++; }
-[ \t\r\v\f]+    {} 
-
- /* FIM DA ADIÇÃO DE TZ */
-
- /*
-  *  Nested comments
-  */
-
- /* ADICIONADO POR TZ */
-
- /* VERIFY UNMATCHED COMMENT */
-{COMMENT_END} {
-  yylval.error_msg = "Unmatched *)";
-  return ERROR;
-}
-
-{COMMENT_START} { 
-  BEGIN(COMMENT);
-  comment_val = 1;
-}
-
-<COMMENT>{COMMENT_START} {
-  comment_val++;
-}
-
-<COMMENT>{COMMENT_END} {
-  comment_val--;
-  if (comment_val == 0) 
-    BEGIN(INITIAL);
-}
-
-<COMMENT>\n {
-  curr_lineno++;
-}
-
-<COMMENT><<EOF>> {
-  BEGIN(INITIAL);
-  yylval.error_msg = "EOF in comment";
-  return ERROR;
-}
-
- /* FIM DA ADIÇÃO DE TZ */
-
 
  /*
   *  The multiple-character operators.
   */
+{DARROW}  { return (DARROW); }
+{ASSIGN}  { return (ASSIGN);}
+{LE} 	  { return (LE);}
  "+" {return '+';}
  "-" {return '-';}
  "*" {return '*';}
  "/" {return '/';}
- "=" { return '='; }
+ "~" {return '~';}
+ "=" {return '=';}
  "(" {return '(';}
  ")" {return ')';}
  "{" {return '{';}
@@ -149,17 +96,7 @@ STRING_DELIMITER         "\""
  "," {return ',';}
  "<" {return '<';}
  "~" {return '~';}
-
-{DARROW}		{ return (DARROW); }
-
- /*ADICIONADO POR TZ: */
-
-{ASSIGN} { return (ASSIGN);}
-{LE} { return (LE);}
-{INTEGER} { cool_yylval.symbol = inttable.add_string(yytext); return INT_CONST; }
-
- /* FIM DA ADIÇÃO DE TZ */
-
+ 
  /*
   * Keywords are case-insensitive except for the values true and false,
   * which must begin with a lower-case letter.
@@ -192,8 +129,7 @@ f(?i:alse) {
 (?i:of) {return OF;}
 (?i:new) {return NEW;}
 (?i:not) {return NOT;}
-
- /* ADICIONADO POR TZ */
+(?i:isvoid) {return ISVOID;}
 
 {TYPE_ID} {
   	cool_yylval.symbol = stringtable.add_string(yytext);
@@ -204,16 +140,49 @@ f(?i:alse) {
 	cool_yylval.symbol = stringtable.add_string(yytext);
 	return OBJECTID;
 }
+ 
+{INTEGER} { cool_yylval.symbol = inttable.add_string(yytext); return INT_CONST; }
 
 
- /* Any character that disrespect above rules throws an error: */
 
-. { 
-  yylval.error_msg = yytext
+ /*
+  *  Nested comments
+  */
+
+{COMMENT_END} {
+  yylval.error_msg = "Unmatched *)";
   return ERROR;
- }
+}
 
- /*FIM DA ADIÇÃO DE TZ */
+{COMMENT_START} { 
+  comment_val = 1;
+  BEGIN(COMMENT);
+  
+}
+
+<COMMENT>{COMMENT_START} {
+  comment_val++;
+}
+
+ /* TESTAR ERRO DE UNMATCHED COMMENT DEPOIS DE UM COMENTÁRIO */
+<COMMENT>{COMMENT_END} {
+  comment_val--;
+  if (comment_val == 0) 
+    BEGIN(INITIAL);
+}
+
+<COMMENT><<EOF>> {
+  BEGIN(INITIAL);
+  yylval.error_msg = "EOF in comment";
+  return ERROR;
+}
+
+<COMMENT>\n {
+  curr_lineno++;
+}
+
+<COMMENT>. {} 
+
 
  /*
   *  String constants (C syntax)
@@ -221,8 +190,6 @@ f(?i:alse) {
   *  \n \t \b \f, the result is c.
   *
   */
-
- /* ADICIONADO POR TZ */
 
 {STRING_DELIMITER} {
   string_buf_ptr = string_buf;
@@ -309,7 +276,14 @@ f(?i:alse) {
 <STRING_ERROR>. {}
 
 
- /* FIM DA ADIÇÃO DE TZ */
+\n              { curr_lineno++; }
+
+[ \t\r\v\f]+    {} 
+
+. { 
+  yylval.error_msg = yytext;
+  return ERROR;
+ }
 
 
 %%
