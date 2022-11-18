@@ -1,3 +1,5 @@
+The command "make test" runs the lexical analyzer without crashing, generates all tokens and detect lexical errors. Therefore we chose keep the errors detected altough the program wouldn't compile in a complete cool compiler.
+
 # Design Decisions
 ## Definitions
 A comment_val variable was used to store the depth of the comment, allowing nested comment without errors.
